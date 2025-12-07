@@ -1,8 +1,7 @@
-import type { HardhatUserConfig } from "hardhat/config";
-import { configVariable } from "hardhat/config";
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
+import { configVariable, defineConfig } from "hardhat/config";
 
-const config: HardhatUserConfig = {
+export default defineConfig({
   plugins: [hardhatToolboxMochaEthersPlugin],
   solidity: {
     profiles: {
@@ -24,6 +23,7 @@ const config: HardhatUserConfig = {
     hardhatMainnet: {
       type: "edr-simulated",
       chainType: "l1",
+      chainId: 31337,
     },
     hardhatOp: {
       type: "edr-simulated",
@@ -36,6 +36,4 @@ const config: HardhatUserConfig = {
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
   },
-};
-
-export default config;
+});

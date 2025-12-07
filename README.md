@@ -1,120 +1,57 @@
-# ToeflRecord — Proyek Hardhat (`mocha` + `ethers`)
+# Sample Hardhat 3 Beta Project (`mocha` and `ethers`)
 
-Repositori untuk kontrak Solidity `ToeflRecord` yang menyimpan data hasil tes TOEFL di blockchain dan menyediakan antarmuka baca.
+This project showcases a Hardhat 3 Beta project using `mocha` for tests and the `ethers` library for Ethereum interactions.
 
-Lihat dokumentasi Hardhat untuk panduan umum: [Panduan Memulai Hardhat](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3)
+To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
 
-## Gambaran proyek
+## Project Overview
 
-Isi repositori ini:
+This example project includes:
 
-- `contracts/ToeflRecord.sol` — kontrak Solidity untuk menyimpan data TOEFL yang diindeks dengan hash `bytes32`.
-- Unit test Solidity (foundry) dan hasil kompilasi di `artifacts/`.
-- Tes integrasi TypeScript menggunakan `mocha` dan `ethers` di `test/`.
+- A simple Hardhat configuration file.
+- Foundry-compatible Solidity unit tests.
+- TypeScript integration tests using `mocha` and ethers.js
+- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
 
-## Ringkasan kontrak
+## Usage
 
-Kontrak: `ToeflRecord`
+### Running Tests
 
-- Struktur `Record` berisi:
-
-- `address address_peserta` — alamat peserta (Metamask)
-- `string nama_lengkap` — nama lengkap peserta
-- `string email` — email peserta
-- `string nomor_induk_mahasiswa` — NIM atau ID mahasiswa
-- `string jurusan` — jurusan
-- `string sesi_tes` — sesi tes (mis. "Pagi")
-- `uint8 tanggal_tes` — tanggal tes (angka)
-- `uint8 nilai_listening` — skor listening
-- `uint8 nilai_structure` — skor structure
-- `uint8 nilai_reading` — skor reading
-- `uint8 tanggal_terbit` — tanggal terbit sertifikat (angka)
-- `address address_admin` — alamat admin yang menerbitkan record
-
-Penyimpanan: `mapping(bytes32 => Record) private records` — menyimpan `Record` berdasarkan `toefl_hash`.
-
-Event: `RecordStored(bytes32 indexed toefl_hash, address indexed address_peserta)` — dipancarkan saat record baru disimpan.
-
-Fungsi utama:
-
-- `storedRecord(bytes32 toefl_hash, Record calldata _record)` — menyimpan record baru; akan revert jika `toefl_hash` sudah ada.
-- `getRecord(bytes32 toefl_hash)` — fungsi view yang mengembalikan `Record`; akan revert jika record tidak ditemukan.
-
-## Menjalankan tes
-
-Jalankan semua tes (Solidity + mocha):
+To run all the tests in the project, execute the following command:
 
 ```shell
 npx hardhat test
 ```
 
-Jalankan hanya test TypeScript / mocha:
-
-```shell
-npx hardhat test mocha
-```
-
-Jalankan hanya test Solidity:
+You can also selectively run the Solidity or `mocha` tests:
 
 ```shell
 npx hardhat test solidity
+npx hardhat test mocha
 ```
 
-## Contoh penggunaan (ethers)
+### Make a deployment to Sepolia
 
-Contoh singkat yang serupa dengan `test/ToeflRecord.test.ts`:
+This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
 
-- Hitung hash sebagai kunci untuk menyimpan record:
-
-```js
-const toeflHash = ethers.keccak256(ethers.toUtf8Bytes("tes123"));
-```
-
-- Siapkan objek `record` yang sesuai dengan struct dan panggil `storedRecord`:
-
-```js
-const record = {
-  address_peserta: peserta.address,
-  nama_lengkap: "Muh. Fadjriano Aprilindo T.",
-  email: "fajri@example.com",
-  nomor_induk_mahasiswa: "F1G121005",
-  jurusan: "Ilmu Komputer",
-  sesi_tes: "Pagi",
-  tanggal_tes: 21,
-  nilai_listening: 25,
-  nilai_structure: 30,
-  nilai_reading: 28,
-  tanggal_terbit: 22,
-  address_admin: owner.address,
-};
-
-await contract.storedRecord(toeflHash, record);
-```
-
-- Ambil record dengan `getRecord`:
-
-```js
-const stored = await contract.getRecord(toeflHash);
-console.log(stored.nama_lengkap, stored.email, stored.nilai_reading);
-```
-
-## Deploy (modul Ignition)
-
-Repositori ini menyertakan modul Ignition di `ignition/modules/ToeflRecord.ts`. Untuk deploy ke chain lokal jalankan:
+To run the deployment to a local chain:
 
 ```shell
-npx hardhat ignition deploy ignition/modules/ToeflRecord.ts
+npx hardhat ignition deploy ignition/modules/Counter.ts
 ```
 
-Untuk deploy ke testnet (mis. Sepolia) atur `SEPOLIA_PRIVATE_KEY` sebagai environment variable atau melalui `hardhat-keystore`, lalu jalankan:
+To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+
+You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
+
+To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
 
 ```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/ToeflRecord.ts
+npx hardhat keystore set SEPOLIA_PRIVATE_KEY
 ```
 
-## Catatan
+After setting the variable, you can run the deployment with the Sepolia network:
 
-- Kontrak mencegah duplikasi record untuk `toefl_hash` yang sama dan akan revert dengan pesan `Record already exists` jika Anda mencoba menyimpan duplikat.
-- Meminta `toefl_hash` yang tidak ada akan revert dengan pesan `Record not found`.
-
----
+```shell
+npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
+```
