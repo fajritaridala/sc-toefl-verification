@@ -1,0 +1,65 @@
+{
+  "contract": "TOEFLRecord",
+  "description": "Immutable registry for TOEFL certificate hashes mapped to their off-chain content identifiers (CIDs).",
+  "compilerVersion": "^0.8.28",
+  "networks": [
+    "Any EVM-compatible network"
+  ],
+  "stateVariables": [
+    {
+      "name": "records",
+      "type": "mapping(bytes32 => string)",
+      "visibility": "private",
+      "description": "Stores a CID string for each unique certificate hash."
+    }
+  ],
+  "events": [
+    {
+      "name": "RecordStored",
+      "indexedParameters": [
+        { "name": "sender", "type": "address", "indexed": true },
+        { "name": "hash", "type": "bytes32", "indexed": true }
+      ],
+      "nonIndexedParameters": [
+        { "name": "cid", "type": "string" }
+      ],
+      "description": "Emitted whenever a new certificate record is stored."
+    }
+  ],
+  "functions": [
+    {
+      "name": "store",
+      "visibility": "public",
+      "stateMutability": "nonpayable",
+      "inputs": [
+        { "name": "hash", "type": "bytes32", "description": "Keccak-256 hash representing the TOEFL certificate payload." },
+        { "name": "cid", "type": "string", "description": "Content identifier (e.g., IPFS CID) pointing to the certificate metadata." }
+      ],
+      "outputs": [],
+      "requirements": [
+        "The hash must not have an existing CID stored."
+      ],
+      "sideEffects": [
+        "Persists the CID for the hash in the records mapping.",
+        "Emits RecordStored with the caller address, hash, and CID."
+      ],
+      "usageNotes": "Use by authorized issuers to register new TOEFL certificates."
+    },
+    {
+      "name": "getRecord",
+      "visibility": "public",
+      "stateMutability": "view",
+      "inputs": [
+        { "name": "hash", "type": "bytes32", "description": "Certificate hash to lookup." }
+      ],
+      "outputs": [
+        { "name": "cid", "type": "string", "description": "Stored CID or empty string if the hash is unknown." }
+      ],
+      "usageNotes": "Call off-chain to retrieve the CID associated with a known certificate hash."
+    }
+  ],
+  "securityConsiderations": [
+    "Only hashes without existing entries can be stored; duplicates are rejected.",
+    "Ensure off-chain validation of certificate details before trusting the CID contents."
+  ]
+}
