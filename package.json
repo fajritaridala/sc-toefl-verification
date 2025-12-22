@@ -2,6 +2,10 @@
   "name": "smart-contract",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "start": "hardhat node --hostname 0.0.0.0 --network hardhatMainnet",
+    "deploy": "hardhat ignition deploy ./ignition/modules/TOEFLRecords.ts --network localhost"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.3",
     "@nomicfoundation/hardhat-ignition": "^3.0.6",
