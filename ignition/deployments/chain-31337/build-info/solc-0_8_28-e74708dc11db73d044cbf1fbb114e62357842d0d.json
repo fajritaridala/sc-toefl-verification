@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-e74708dc11db73d044cbf1fbb114e62357842d0d",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/TOEFLRecord.sol": "project/contracts/TOEFLRecord.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/TOEFLRecord.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\ncontract TOEFLRecord {\r\n  // mapping untuk menyimpan data relasi antara hash dan cid pinata\r\n  mapping(bytes32 => string) private records;\r\n\r\n  event RecordStored(address indexed sender, bytes32 indexed hash, string cid);\r\n\r\n  // fungsi untuk menulis/menyimpan data ke blockchain\r\n  function store(bytes32 hash, string memory cid) public {\r\n    require(bytes(records[hash]).length == 0, \"Record already exists\"); // memastikan bahwa hash yang dikirim belum pernah ada sebelumnya.\r\n\r\n    // menyimpan cid ke dalam mapping, berdasarkan hash yang diberikan.\r\n    records[hash] = cid;\r\n\r\n    // memberitahu DApp/frontend bahwa penyimpanan data berhasil.\r\n    emit RecordStored(msg.sender, hash, cid);\r\n  }\r\n\r\n  // fungsi untuk membaca data dari blockchain\r\n  function getRecord(bytes32 hash) public view returns (string memory) {\r\n    // mengembalikan/memberi string cid berdasarkan hash yang diberikan.\r\n    return records[hash];\r\n  }\r\n}\r\n"
+      }
+    }
+  }
+}
